@@ -5,7 +5,7 @@ const Dashboard = ({ onBackToWelcome }) => {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
             <header className="w-full bg-slate-800 p-4 shadow-xl fixed top-0 left-0">
                 <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
-                    Dashboard
+                    Cassandra's Digital Solutions - Dashboard
                 </h1>
             </header>
 
@@ -33,8 +33,8 @@ const Dashboard = ({ onBackToWelcome }) => {
             </div>
 
             <footer className="w-full bg-slate-800 p-4 shadow-xl fixed bottom-0 left-0">
-                <p className="text-gray-300 text-center text-sm font-medium">
-                    Dashboard Footer
+                <p className="text-gray-300 text-center text-sm font-medium font-sans">
+                    &copy; 2025 Cassandra's Digital Solutions. All rights reserved.
                 </p>
             </footer>
         </div>

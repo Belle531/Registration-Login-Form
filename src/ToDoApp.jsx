@@ -43,7 +43,7 @@ const ToDoApp = ({ onBackToDashboard }) => {
             </div>
 
             <footer className="w-full bg-slate-800 p-4 shadow-xl fixed bottom-0 left-0">
-                <p className="text-gray-300 text-center text-sm font-medium">
+                <p className="text-gray-300 text-center text-sm font-medium font-sans">
                     &copy; 2025 Cassandra's Digital Solutions. All rights reserved.
                 </p>
             </footer>
