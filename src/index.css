@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* We use the @layer base to apply custom CSS (like fonts) 
+   that should run before all the Tailwind utility classes.
+*/
+@layer base {
+  body {
+    /* Ensures our preferred font is used across the app */
+    font-family: 'Inter', sans-serif;
+  }
+}
+
