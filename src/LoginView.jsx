@@ -70,7 +70,28 @@ const LoginView = ({ onLoginSuccess, onSwitchToRegister }) => {
             setTimeout(() => {
                 setShowToast(false);
                 setTimeout(() => {
-                    onLoginSuccess();
+                    // Create user object from the form data with smart name extraction
+                    const emailPrefix = email.split('@')[0];
+                    const emailParts = emailPrefix.split('.');
+                    
+                    // Clean up names by removing numbers and special characters
+                    const cleanName = (name) => {
+                        return name.replace(/[0-9]/g, '').replace(/[^a-zA-Z]/g, '');
+                    };
+                    
+                    const firstName = emailParts[0] ? 
+                        cleanName(emailParts[0]).charAt(0).toUpperCase() + cleanName(emailParts[0]).slice(1).toLowerCase() : 'User';
+                    const lastName = emailParts[1] ? 
+                        cleanName(emailParts[1]).charAt(0).toUpperCase() + cleanName(emailParts[1]).slice(1).toLowerCase() : '';
+                    
+                    const cognitoUser = {
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        uid: `cognito-${email}`,
+                        authMethod: 'Cognito OIDC'
+                    };
+                    onLoginSuccess(cognitoUser); // Pass the user data
                 }, 500);
             }, 6000);
         }, 2000);
@@ -123,7 +144,7 @@ const LoginView = ({ onLoginSuccess, onSwitchToRegister }) => {
 
         // Standard API login call to your backend
         try {
-            const response = await fetch('http://localhost:3001/login', {
+            const response = await fetch('http://localhost:3003/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
