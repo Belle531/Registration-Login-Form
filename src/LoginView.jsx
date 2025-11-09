@@ -108,6 +108,56 @@ const LoginView = ({ onLoginSuccess, onSwitchToRegister }) => {
         }, 2000);
     };
 
+    const handleStandardLogin = async () => {
+        setMessage('');
+
+        // Basic validation
+        if (!email || !password) {
+            setMessage('Error: Please fill in all fields');
+            return;
+        }
+
+        setIsLoading(true);
+        console.log('Attempting standard login:', { email, password, rememberMe });
+        setMessage('Authenticating with backend API...');
+
+        // Standard API login call to your backend
+        try {
+            const response = await fetch('http://localhost:3001/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    rememberMe: rememberMe
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setMessage(data.message || 'Login successful!');
+                // Store the JWT token if provided
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token);
+                }
+                // Call success handler with user data
+                setTimeout(() => {
+                    onLoginSuccess(data.user || { email: email });
+                }, 1000);
+            } else {
+                setMessage(data.error || 'Login failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Standard login error:', error);
+            setMessage('Unable to connect to server');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleForgotCredentials = () => {
         setMessage('');
         
@@ -285,11 +335,19 @@ const LoginView = ({ onLoginSuccess, onSwitchToRegister }) => {
                             </a>
                         </div>
 
-                        <button type="submit" disabled={isLoading}
-                                className="w-full bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md mt-6 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
-                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                            {isLoading ? 'Authenticating with Cognito...' : 'Sign In with Cognito OIDC'}
-                        </button>
+                        {/* Two Login Options */}
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                            <button type="submit" disabled={isLoading}
+                                    className="bg-amber-500 text-slate-900 font-bold px-4 py-3 rounded-xl hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                                {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                                {isLoading ? 'Authenticating...' : 'Cognito OIDC'}
+                            </button>
+                            
+                            <button type="button" onClick={() => handleStandardLogin()}
+                                    className="bg-slate-700 text-white font-bold px-4 py-3 rounded-xl hover:bg-slate-800 active:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-300 shadow-md flex items-center justify-center">
+                                Standard Login
+                            </button>
+                        </div>
 
                         {/* Social Login Options */}
                         <div className="mt-6">

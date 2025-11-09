@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe } from 'lucide-react';
+import { Globe, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from './assets/AuthLayout.jsx';
 
 // ====================================================================
@@ -18,8 +18,13 @@ const translations = {
         alreadyHaveAccount: "Already have an account?",
         signIn: "Sign In",
         errorFillFields: "Error: Please fill in all fields",
-        errorPasswordMismatch: "Error: Passwords do not match",
-        errorPasswordTooShort: "Error: Password must be at least 6 characters long",
+        errorPasswordMismatch: "Passwords do not match",
+        errorPasswordTooShort: "Password must be at least 6 characters long",
+        errorGeneral: "Registration failed. Please try again.",
+        errorNetwork: "Unable to connect to server",
+        successMessage: "Registration successful!",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
         registrationSuccess: "Registration successful! Please check your email for verification."
     },
     es: {
@@ -34,8 +39,13 @@ const translations = {
         alreadyHaveAccount: "¿Ya tienes una cuenta?",
         signIn: "Iniciar Sesión",
         errorFillFields: "Error: Por favor completa todos los campos",
-        errorPasswordMismatch: "Error: Las contraseñas no coinciden",
-        errorPasswordTooShort: "Error: La contraseña debe tener al menos 6 caracteres",
+        errorPasswordMismatch: "Las contraseñas no coinciden",
+        errorPasswordTooShort: "La contraseña debe tener al menos 6 caracteres",
+        errorGeneral: "Error en el registro. Inténtalo de nuevo.",
+        errorNetwork: "No se puede conectar al servidor",
+        successMessage: "¡Registro exitoso!",
+        showPassword: "Mostrar contraseña",
+        hidePassword: "Ocultar contraseña",
         registrationSuccess: "¡Registro exitoso! Por favor revisa tu email para la verificación."
     },
     fr: {
@@ -50,8 +60,13 @@ const translations = {
         alreadyHaveAccount: "Vous avez déjà un compte?",
         signIn: "Se connecter",
         errorFillFields: "Erreur: Veuillez remplir tous les champs",
-        errorPasswordMismatch: "Erreur: Les mots de passe ne correspondent pas",
-        errorPasswordTooShort: "Erreur: Le mot de passe doit contenir au moins 6 caractères",
+        errorPasswordMismatch: "Les mots de passe ne correspondent pas",
+        errorPasswordTooShort: "Le mot de passe doit contenir au moins 6 caractères",
+        errorGeneral: "Échec de l'inscription. Veuillez réessayer.",
+        errorNetwork: "Impossible de se connecter au serveur",
+        successMessage: "Inscription réussie!",
+        showPassword: "Afficher le mot de passe",
+        hidePassword: "Masquer le mot de passe",
         registrationSuccess: "Inscription réussie! Veuillez vérifier votre email pour la vérification."
     }
 };
@@ -66,6 +81,8 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin }) => {
     });
     const [message, setMessage] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('en');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Get current language translations
     const t = translations[selectedLanguage];
@@ -78,7 +95,7 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin }) => {
         }));
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setMessage('');
 
@@ -98,21 +115,44 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin }) => {
             return;
         }
 
-        // CAPSTONE PROJECT: Replace this with your AWS Lambda /register API call
-        console.log('Attempting to register user:', formData, 'Language:', selectedLanguage);
-        setMessage(t.registrationSuccess);
+        // CAPSTONE PROJECT: AWS Lambda /register API call
+        try {
+            const response = await fetch('http://localhost:3001/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,  // add this for server validation
+                    selectedLanguage: selectedLanguage  // <- consistent field name
+                })
+            });
 
-        // Mock success action
-        setTimeout(() => {
-            // Pass user data to registration success handler
-            const userData = {
-                email: formData.email,
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                uid: `user-${Date.now()}` // Mock user ID
-            };
-            onRegisterSuccess(userData);
-        }, 1500);
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setMessage(data.message || t.successMessage);
+                // Store the JWT token if provided
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token);
+                }
+                // Call success handler with user data
+                onRegisterSuccess(data.user || { 
+                    firstName: formData.firstName, 
+                    lastName: formData.lastName, 
+                    email: formData.email 
+                });
+            } else {
+                setMessage(data.error || t.errorGeneral);
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            setMessage(t.errorNetwork || 'Unable to connect to server');
+        }
     };
 
     return (
@@ -187,30 +227,50 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin }) => {
 
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">{t.password}</label>
-                        <input 
-                            id="password" 
-                            name="password"
-                            type="password" 
-                            required 
-                            value={formData.password} 
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-500"
-                            placeholder={t.password}
-                        />
+                        <div className="relative">
+                            <input 
+                                id="password" 
+                                name="password"
+                                type={showPassword ? "text" : "password"} 
+                                required 
+                                value={formData.password} 
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-500"
+                                placeholder={t.password}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                title={showPassword ? t.hidePassword : t.showPassword}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <div>
                         <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1">{t.confirmPassword}</label>
-                        <input 
-                            id="confirmPassword" 
-                            name="confirmPassword"
-                            type="password" 
-                            required 
-                            value={formData.confirmPassword} 
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-500"
-                            placeholder={t.confirmPassword}
-                        />
+                        <div className="relative">
+                            <input 
+                                id="confirmPassword" 
+                                name="confirmPassword"
+                                type={showConfirmPassword ? "text" : "password"} 
+                                required 
+                                value={formData.confirmPassword} 
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-500"
+                                placeholder={t.confirmPassword}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                title={showConfirmPassword ? t.hidePassword : t.showPassword}
+                            >
+                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     {/* Button Row - Create Account and Language Selector */}
