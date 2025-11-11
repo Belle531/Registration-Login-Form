@@ -47,28 +47,72 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
   const [weatherData, setWeatherData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
-  const [selectedLocation, setSelectedLocation] = React.useState('Current Location');
+  const [selectedLocation, setSelectedLocation] = React.useState('');
   const [customLocation, setCustomLocation] = React.useState('');
+  const [showRecentDropdown, setShowRecentDropdown] = React.useState(false);
+  // Automatically set current location on startup
+  React.useEffect(() => {
+    if (!selectedLocation && navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const geoRes = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`);
+          const geoData = await geoRes.json();
+          if (geoData && geoData[0] && geoData[0].name) {
+            setSelectedLocation(geoData[0].name);
+            setRecentSearches(prev => {
+              const updated = [geoData[0].name, ...prev.filter(l => l !== geoData[0].name)].slice(0, 5);
+              return updated;
+            });
+          } else {
+            setSelectedLocation('Current Location');
+          }
+        } catch {
+          setSelectedLocation('Current Location');
+        }
+        setLoading(false);
+        setCustomLocation('');
+        setShowRecentDropdown(false);
+      }, () => {
+        setSelectedLocation('Current Location');
+        setLoading(false);
+        setCustomLocation('');
+        setShowRecentDropdown(false);
+      });
+    }
+  }, [selectedLocation]);
 
   // Fetch weather data when selectedLocation changes
   React.useEffect(() => {
     if (!selectedLocation) return;
     setLoading(true);
     setError('');
-    // Example: OpenWeatherMap API (replace with your API key)
-    const apiKey = 'YOUR_API_KEY';
-    const query = encodeURIComponent(selectedLocation);
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${query}&units=imperial&appid=${apiKey}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch weather data');
-        return res.json();
-      })
+    // Backend integration: Replace YOUR_BACKEND_URL with your actual backend URL
+    const fetchWeather = async (city) => {
+      try {
+        const response = await fetch(`http://localhost:3003/weather?city=${encodeURIComponent(city)}`);
+        if (!response.ok) throw new Error('Failed to fetch weather');
+        const data = await response.json();
+        // Use data as you did before (data.main.temp, data.weather[0].description, etc.)
+        return data;
+      } catch (error) {
+        console.error('Weather fetch error:', error);
+        return null;
+      }
+    };
+
+    fetchWeather(selectedLocation)
       .then(data => {
-        setWeatherData(data);
+        if (data) {
+          setWeatherData(data);
+        } else {
+          setError('Error fetching weather data');
+        }
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message || 'Error fetching weather data');
+        setError(err?.message || 'Error fetching weather data');
         setLoading(false);
       });
   }, [selectedLocation]);
@@ -76,7 +120,39 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
 
 
   // Location select handler (ready for API integration)
-  function handleLocationSelect(location) {
+  async function handleLocationSelect(location) {
+    if (location === 'Current Location' && navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        // Use OpenWeatherMap reverse geocoding API to get city name
+        try {
+          const geoRes = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`);
+          const geoData = await geoRes.json();
+          if (geoData && geoData[0] && geoData[0].name) {
+            // Only use the city name, ignore state completely
+            setSelectedLocation(geoData[0].name);
+            setRecentSearches(prev => {
+              const updated = [geoData[0].name, ...prev.filter(l => l !== geoData[0].name)].slice(0, 5);
+              return updated;
+            });
+          } else {
+            setSelectedLocation('Current Location');
+          }
+        } catch {
+          setSelectedLocation('Current Location');
+        }
+        setLoading(false);
+        setCustomLocation('');
+        setShowRecentDropdown(false);
+      }, () => {
+        setSelectedLocation('Current Location');
+        setLoading(false);
+        setCustomLocation('');
+        setShowRecentDropdown(false);
+      });
+      return;
+    }
     if (location) {
       setSelectedLocation(location);
       setRecentSearches(prev => {
@@ -85,6 +161,7 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
       });
     }
     setCustomLocation('');
+    setShowRecentDropdown(false);
   }
 
   return (
@@ -181,32 +258,53 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
             {/* Search Bar and Controls */}
             <div className="flex flex-col items-center w-full mb-6">
               <div className="relative w-full max-w-md mb-4">
-                <input
-                  type="text"
-                  placeholder="Search city or state..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-base pr-10"
-                  value={customLocation}
-                  onChange={e => setCustomLocation(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') handleLocationSelect(customLocation);
-                  }}
-                />
-                {/* Search Icon - absolute right inside input */}
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8" stroke="currentColor" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" />
-                  </svg>
-                </span>
+                <div className="flex w-full items-center gap-2">
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <div className="flex-1 flex justify-end">
+                      <button
+                        type="button"
+                        className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200 ${selectedLocation === 'Current Location' ? 'ring-2 ring-blue-400' : ''}`}
+                        style={{ minWidth: '220px', height: '40px', fontSize: '1rem', paddingLeft: '1.25rem', paddingRight: '1.25rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+                        onClick={() => handleLocationSelect('Current Location')}
+                      >
+                        <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.07-7.07l-1.42 1.42M6.35 17.65l-1.42 1.42m12.02 0l-1.42-1.42M6.35 6.35L4.93 4.93" />
+                        </svg>
+                        <span className="whitespace-nowrap">Set Current Location</span>
+                      </button>
+                    </div>
+                    <div className="relative flex-1 flex justify-center">
+                      <input
+                        type="text"
+                        placeholder="Search city or state..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-base pr-10"
+                        value={customLocation}
+                        onChange={e => setCustomLocation(e.target.value)}
+                        onFocus={() => setShowRecentDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowRecentDropdown(false), 150)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleLocationSelect(customLocation);
+                        }}
+                      />
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <circle cx="11" cy="11" r="8" stroke="currentColor" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 {/* Recent Searches Dropdown */}
-                {recentSearches.length > 0 && (
+                {showRecentDropdown && recentSearches.length > 0 && (
                   <div className="absolute left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-2">
                     <div className="text-xs text-gray-500 mb-2">Recent Searches</div>
                     {recentSearches.map((loc, idx) => (
                       <button
                         key={idx}
                         className="block w-full text-left px-4 py-2 hover:bg-blue-100 text-gray-700 text-sm font-medium"
-                        onClick={() => handleLocationSelect(loc)}
+                        onMouseDown={() => handleLocationSelect(loc)}
                       >
                         {loc}
                       </button>
@@ -310,39 +408,38 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
                   <span className="text-2xl font-bold text-gray-800 mr-2">⚙️ Settings</span>
                 </div>
                 <div className="flex flex-wrap gap-4 w-full justify-center">
-                  {/* Controls Buttons - Only Theme, Units, Alerts, Notify remain here */}
                   {/* Theme Toggle */}
                   <div className="flex items-center gap-2">
                     <span className="text-gray-700 font-medium">Theme:</span>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold shadow hover:bg-gray-200 transition-colors duration-200 text-sm">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75z"/></svg>
+                    <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                      <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75z"/></svg>
                       Light
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-white font-semibold shadow hover:bg-slate-700 transition-colors duration-200 text-sm">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18z"/></svg>
+                    <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                      <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18z"/></svg>
                       Dark
                     </button>
                   </div>
                   {/* Unit Toggle */}
                   <div className="flex items-center gap-2">
                     <span className="text-gray-700 font-medium">Units:</span>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors duration-200 text-sm">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                    <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                      <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
                       °F
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-semibold shadow hover:bg-blue-200 transition-colors duration-200 text-sm">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+                    <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                      <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
                       °C
                     </button>
                   </div>
                   {/* Alerts Button */}
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-100 text-orange-700 font-semibold shadow hover:bg-orange-200 transition-colors duration-200 text-sm">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd"/></svg>
+                  <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd"/></svg>
                     Alerts
                   </button>
                   {/* Notify Button */}
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 text-green-700 font-semibold shadow hover:bg-green-200 transition-colors duration-200 text-sm">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.243.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd"/></svg>
+                  <button type="button" className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-blue-700 font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base transition-all duration-200" style={{ minWidth: '120px', height: '36px', fontSize: '1rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', lineHeight: '1.2', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.243.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd"/></svg>
                     Notify
                   </button>
                 </div>
