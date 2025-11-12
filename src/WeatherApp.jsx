@@ -88,10 +88,10 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
     if (!selectedLocation) return;
     setLoading(true);
     setError('');
-    // Backend integration: Replace YOUR_BACKEND_URL with your actual backend URL
+    // Backend integration: Use deployed backend URL
     const fetchWeather = async (city) => {
       try {
-        const response = await fetch(`http://localhost:3003/weather?city=${encodeURIComponent(city)}`);
+        const response = await fetch(`https://cdsback-backend.onrender.com/weather?city=${encodeURIComponent(city)}`);
         if (!response.ok) throw new Error('Failed to fetch weather');
         const data = await response.json();
         // Use data as you did before (data.main.temp, data.weather[0].description, etc.)
