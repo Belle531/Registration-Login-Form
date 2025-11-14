@@ -174,7 +174,7 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
             </svg>
-            <span className="text-blue-700 font-semibold">Loading...</span>
+            <span className="text-blue-700 font-semibold">Wait I'm Thinking...</span>
           </div>
         </div>
       )}
@@ -184,25 +184,17 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
           {error}
         </div>
       )}
-      {/* Header - Consistent with other apps */}
+      {/* Header - Unified style */}
       <header className="w-full bg-slate-800 p-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-2 opacity-0 pointer-events-none">
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Welcome</button>
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Dashboard</button>
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Logout</button>
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Login</button>
-          </div>
-          <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
+        <div className="flex items-center justify-between w-full gap-4">
+              {/* Spacer to help center title with card */}
+              <div style={{ width: '112px' }}></div>
+          {/* Centered Title */}
+          <h1 className="text-3xl font-extrabold text-white text-center tracking-wider flex-1">
             Cassandra's Digital Solutions
           </h1>
+          {/* Header Navigation Buttons (far right) */}
           <div className="flex space-x-2">
-            <button
-              onClick={onBackToDashboard}
-              className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
-            >
-              Welcome
-            </button>
             <button
               onClick={onBackToDashboard}
               className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"

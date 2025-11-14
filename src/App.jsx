@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import LoginView from './LoginView.jsx';
 import RegisterView from './RegisterView.jsx';
-import Welcome from './Welcome.jsx';
+import ContactForm from './ContactForm.jsx';
 import Dashboard from './Dashboard.jsx';
 import ToDoApp from './ToDoApp.jsx';
 import WeatherApp from './WeatherApp.jsx';
 
 export default function App() {
-    const [currentView, setCurrentView] = useState('register'); // 'register', 'login', 'welcome', 'dashboard', 'todo', 'weather'
+    const [currentView, setCurrentView] = useState('login'); // 'login', 'dashboard', 'todo', 'weather', 'contactform', 'register'
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
 
@@ -40,7 +40,7 @@ export default function App() {
         }
         
         setUser(userInfo);
-        setCurrentView('welcome');
+        setCurrentView('dashboard');
     };
 
     const handleRegisterSuccess = (userData = null) => {
@@ -48,8 +48,8 @@ export default function App() {
             // Store user data for future login
             sessionStorage.setItem('registeredUser', JSON.stringify(userData));
         }
-        setCurrentView('login');
-        alert("Registration successful! Please log in with your new account.");
+        setCurrentView('dashboard');
+        alert("Registration successful! You are now on the dashboard.");
     };
 
     const handleSwitchToRegister = () => {
@@ -74,8 +74,9 @@ export default function App() {
         setCurrentView('dashboard');
     };
 
-    const handleGoToWelcome = () => {
-        setCurrentView('welcome');
+    // Show ContactForm when System Analytics is clicked
+    const handleGoToContactForm = () => {
+        setCurrentView('contactform');
     };
 
     const handleGoToWeather = () => {
@@ -83,7 +84,7 @@ export default function App() {
     };
 
     const handleBackToDashboard = () => {
-        setCurrentView('welcome'); // ToDo goes back to Welcome, not Dashboard
+        setCurrentView('dashboard'); // ToDo goes back to Dashboard
     };
 
     // Show Weather App
@@ -98,12 +99,12 @@ export default function App() {
 
     // Show Dashboard
     if (isAuthenticated && currentView === 'dashboard') {
-        return <Dashboard handleLogout={handleLogout} onGoToToDo={handleGoToToDo} onGoToDashboard={handleGoToDashboard} onGoToWelcome={handleGoToWelcome} onGoToWeather={handleGoToWeather} />;
+        return <Dashboard handleLogout={handleLogout} onGoToToDo={handleGoToToDo} onGoToDashboard={handleGoToDashboard} onGoToWeather={handleGoToWeather} onGoToRegister={() => setCurrentView('register')} onGoToContactForm={handleGoToContactForm} />;
     }
 
-    // Show Welcome (main dashboard after login)
-    if (isAuthenticated && currentView === 'welcome') {
-        return <Welcome user={user} handleLogout={handleLogout} onGoToToDo={handleGoToToDo} onGoToDashboard={handleGoToDashboard} onSwitchToLogin={handleSwitchToLogin} onGoToWeather={handleGoToWeather} />;
+    // Show ContactForm (from System Analytics)
+    if (isAuthenticated && currentView === 'contactform') {
+        return <ContactForm />;
     }
 
     // Show OIDC Login View (only login form)
@@ -116,11 +117,24 @@ export default function App() {
         );
     }
 
-    // Show Register View (default)
+    // Show RegisterView only when requested from Dashboard
+    if (isAuthenticated && currentView === 'register') {
+        return (
+            <RegisterView 
+                onRegisterSuccess={handleRegisterSuccess}
+                onSwitchToLogin={handleSwitchToLogin}
+                onGoToDashboard={handleGoToDashboard}
+                handleLogout={handleLogout}
+                onGoToLogin={handleSwitchToLogin}
+            />
+        );
+    }
+
+    // Show OIDC Login View (only login form)
     return (
-        <RegisterView 
-            onRegisterSuccess={handleRegisterSuccess}
-            onSwitchToLogin={handleSwitchToLogin}
+        <LoginView 
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToRegister={handleSwitchToRegister}
         />
     );
 }

@@ -25,7 +25,7 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
                 <div className="flex items-center justify-between">
                     {/* Spacer to balance the layout */}
                     <div className="flex space-x-2 opacity-0 pointer-events-none">
-                        <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Welcome</button>
+                        
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Dashboard</button>
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Logout</button>
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Login</button>
@@ -37,12 +37,7 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
                     
                     {/* Header Navigation Buttons */}
                     <div className="flex space-x-2">
-                        <button
-                            onClick={() => {/* Already on Welcome page */}}
-                            className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs opacity-75 cursor-default"
-                        >
-                            Welcome
-                        </button>
+
                         <button
                             onClick={onGoToDashboard}
                             className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"

@@ -156,21 +156,14 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
             i === idx ? { ...todo, completed: !currentStatus } : todo
           )
         );
-        console.log('✅ Task updated:', data.task);
+        console.log('✅ Task completion toggled:', taskId);
       } else {
-        setError(data.error || 'Failed to update task');
+        setError(data.error || 'Failed to update task status');
       }
     } catch (err) {
-      console.error('❌ Error updating task:', err);
-      setError('Unable to update task');
+      console.error('❌ Error toggling completion:', err);
+      setError('Unable to update task status');
     }
-  };
-
-  // Start editing a task
-  const startEdit = (taskId, currentText, currentPriority) => {
-    setEditingId(taskId);
-    setEditText(currentText);
-    setEditPriority(currentPriority || 'medium');
   };
 
   // Cancel editing
@@ -181,6 +174,12 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
   };
 
   // Save edited task to backend
+    // Start editing a task
+    const startEdit = (taskId, text, currentPriority) => {
+      setEditingId(taskId);
+      setEditText(text);
+      setEditPriority(currentPriority || 'medium');
+    };
   const saveEdit = async (taskId, idx) => {
     if (!editText.trim()) return;
 
@@ -250,12 +249,6 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
               onClick={onBackToDashboard}
               className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
             >
-              Welcome
-            </button>
-            <button
-              onClick={onBackToDashboard}
-              className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
-            >
               Dashboard
             </button>
             <button
@@ -281,19 +274,17 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
       {/* MAIN CONTENT AREA: Uses flex-grow to take up all available vertical space */}
       <div className="flex flex-col items-center w-full px-4 py-8 flex-grow"> 
 
+        {/* Logo Section - Enhanced (moved above card) */}
+        <div className="mb-6 text-center">
+          <div className="relative inline-block">
+            <div className="w-40 h-40 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-300 border-2 border-white">
+              <span className="text-white font-bold text-4xl tracking-wider">CDS</span>
+            </div>
+            <div className="absolute inset-0 rounded-full border-2 border-amber-400 opacity-20 animate-ping"></div>
+          </div>
+        </div>
         {/* 2. RESPONSIVE Todo List Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xs sm:max-w-md md:max-w-lg transition-all duration-300 border border-gray-100">
-          {/* Logo Section - Enhanced */}
-          <div className="mb-6 text-center">
-            {/* Logo Container with Animation */}
-            <div className="relative inline-block">
-              <div className="w-40 h-40 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-300 border-2 border-white">
-                <span className="text-white font-bold text-4xl tracking-wider">CDS</span>
-              </div>
-              {/* Animated Ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-amber-400 opacity-20 animate-ping"></div>
-            </div>
-          </div>
           
           <h2 className="text-xl font-bold text-slate-800 mb-4 text-center border-b pb-2 border-gray-100">
             {user?.firstName ? `${user.firstName}'s` : "Cassandra's"} Digital Task Manager
@@ -310,7 +301,7 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
           {loading && (
             <div className="text-center py-4">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
-              <p className="mt-2 text-gray-600">Loading tasks...</p>
+              <p className="mt-2 text-gray-600">Thanks for Waiting I'm Thinking...</p>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Settings, Calendar, ChefHat, TrendingUp, Cloud, Briefcase } from 'lucide-react';
+import { Settings, Calendar, ChefHat, TrendingUp, Cloud, LogOut, Briefcase } from 'lucide-react';
 
-const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, onGoToRegister }) => {
+const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWelcome, onGoToWeather, onGoToRegister }) => {
 
     // Helper component for the professional-looking card/tile
     const AppTile = ({ title, description, icon: Icon, onClick, color }) => {
@@ -42,20 +42,25 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                 .fade-in { animation: fadeIn 0.8s ease-out; }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
+            
             {/* Header */}
             <header className="w-full bg-slate-800 p-4 shadow-xl fixed top-0 left-0 z-10">
-                <div className="flex items-center w-full gap-4">
-                    {/* Centered Title */}
-                    <div className="flex-1 flex justify-center">
-                        <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-wider text-center mx-auto">
-                            Cassandra's Digital Solutions
-                        </h1>
-                    </div>
-                    {/* Header Navigation Buttons (far right) */}
+                <div className="flex items-center justify-between">
+                    {/* Left side: Simplified Company Name */}
+                    <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-wider truncate">
+                        Cassandra's Digital Solutions
+                    </h1>
+                    
+                    {/* Header Navigation Buttons */}
                     <div className="flex space-x-2 text-xs sm:text-sm">
+                        <button onClick={onGoToWelcome} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Welcome</button>
                         <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
-                        <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
-                        <button onClick={onGoToRegister} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Login</button>
+                        <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-1">
+                            <LogOut size={16} className="hidden sm:inline" />
+                            <span>Logout</span>
+                        </button>
+                        {/* Assuming login action also initiates logout for security */}
+                        <button onClick={handleLogout} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Login</button>
                     </div>
                 </div>
             </header>
@@ -121,16 +126,16 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             title="The Spice Rack"
                             description="Search, save, and share recipes with the community."
                             icon={ChefHat}
-                            onClick={() => alert('App coming soon!')}
+                            onClick={() => console.log('The Spice Rack coming soon!')} // Replaced alert()
                             color="orange"
                         />
 
                         {/* 5. Placeholder Tile - Analytics */}
                         <AppTile 
-                            title="Contact Form"
-                            description="Reach out to us using the contact form."
+                            title="System Analytics"
+                            description="View performance metrics and user activity reports."
                             icon={Settings}
-                            onClick={() => alert('App coming soon!')}
+                            onClick={() => console.log('Analytics coming soon!')}
                             color="slate"
                         />
                          {/* 6. Placeholder Tile - Documents */}
@@ -138,15 +143,21 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             title="Document Storage"
                             description="Securely access and manage all your documents."
                             icon={Briefcase}
-                            onClick={() => alert('App coming soon!')}
+                            onClick={() => console.log('Documents coming soon!')}
                             color="sky"
                         />
                     </div>
                 </div>
             </main>
+
+            {/* Footer */}
+            <footer className="w-full bg-slate-800 p-4 shadow-xl mt-auto">
+                <p className="text-gray-300 text-center text-sm font-medium font-sans">
+                    &copy; 2025 Cassandra's Digital Solutions. All rights reserved.
+                </p>
+            </footer>
         </div>
     );
-}
+};
 
 export default Dashboard;
-
