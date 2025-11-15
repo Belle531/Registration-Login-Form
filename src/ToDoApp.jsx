@@ -233,15 +233,17 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
         <div className="flex items-center justify-between">
           {/* Spacer to balance the layout */}
           <div className="flex space-x-2 opacity-0 pointer-events-none">
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Welcome</button>
+            {/* Removed Welcome button for UI cleanup */}
             <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Dashboard</button>
             <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Logout</button>
             <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Login</button>
           </div>
           
-          <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
-            Cassandra's Digital Solutions
-          </h1>
+            <div className="flex-1 flex justify-center">
+              <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
+                Cassandra's Digital Solutions
+              </h1>
+            </div>
           
           {/* Header Navigation Buttons */}
           <div className="flex space-x-2">

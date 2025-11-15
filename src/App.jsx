@@ -1,140 +1,51 @@
 import React, { useState } from 'react';
-import LoginView from './LoginView.jsx';
-import RegisterView from './RegisterView.jsx';
-import ContactForm from './ContactForm.jsx';
 import Dashboard from './Dashboard.jsx';
+import LoginView from './LoginView.jsx';
+import ContactForm from './ContactForm.jsx';
+import RegisterView from './RegisterView.jsx';
 import ToDoApp from './ToDoApp.jsx';
 import WeatherApp from './WeatherApp.jsx';
-
 export default function App() {
-    const [currentView, setCurrentView] = useState('login'); // 'login', 'dashboard', 'todo', 'weather', 'contactform', 'register'
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
+    const [view, setView] = useState('dashboard'); // 'dashboard', 'login', 'contactform', 'register', 'todo', 'weather'
 
-    const handleLoginSuccess = (userData = null) => {
-        setIsAuthenticated(true);
-        
-        // Try to get user data from multiple sources
-        let userInfo = userData;
-        
-        // If no userData provided, check sessionStorage for registered user
-        if (!userInfo) {
-            const storedUser = sessionStorage.getItem('registeredUser');
-            if (storedUser) {
-                try {
-                    userInfo = JSON.parse(storedUser);
-                } catch (e) {
-                    console.error('Error parsing stored user data:', e);
-                }
-            }
-        }
-        
-        // Fallback to mock data if no user info available
-        if (!userInfo) {
-            userInfo = { 
-                email: 'user@example.com', 
-                uid: 'mock-user-id',
-                firstName: 'John',
-                lastName: 'Doe'
-            };
-        }
-        
-        setUser(userInfo);
-        setCurrentView('dashboard');
-    };
+    // Navigation handlers
+    const handleGoToDashboard = () => setView('dashboard');
+    const handleGoToLogin = () => setView('login');
+    const handleGoToContactForm = () => setView('contactform');
+    const handleGoToRegister = () => setView('register');
+    const handleGoToToDo = () => setView('todo');
+    const handleGoToWeather = () => setView('weather');
 
-    const handleRegisterSuccess = (userData = null) => {
-        if (userData) {
-            // Store user data for future login
-            sessionStorage.setItem('registeredUser', JSON.stringify(userData));
-        }
-        setCurrentView('dashboard');
-        alert("Registration successful! You are now on the dashboard.");
-    };
+    // After login, go to contact form
+    const handleLoginSuccess = () => setView('contactform');
+    // After registration, go to dashboard
+    const handleRegisterSuccess = () => setView('dashboard');
 
-    const handleSwitchToRegister = () => {
-        setCurrentView('register');
-    };
-
-    const handleSwitchToLogin = () => {
-        setCurrentView('login'); // OIDC login only
-    };
-
-    const handleLogout = () => {
-        setIsAuthenticated(false);
-        setUser(null);
-        setCurrentView('login'); // Back to OIDC login
-    };
-
-    const handleGoToToDo = () => {
-        setCurrentView('todo');
-    };
-
-    const handleGoToDashboard = () => {
-        setCurrentView('dashboard');
-    };
-
-    // Show ContactForm when System Analytics is clicked
-    const handleGoToContactForm = () => {
-        setCurrentView('contactform');
-    };
-
-    const handleGoToWeather = () => {
-        setCurrentView('weather');
-    };
-
-    const handleBackToDashboard = () => {
-        setCurrentView('dashboard'); // ToDo goes back to Dashboard
-    };
-
-    // Show Weather App
-    if (currentView === 'weather') {
-        return <WeatherApp onBackToDashboard={handleBackToDashboard} user={user} />;
+    if (view === 'login') {
+        return <LoginView onLoginSuccess={handleLoginSuccess} onSwitchToRegister={handleGoToRegister} />;
     }
-
-    // Show ToDo App
-    if (currentView === 'todo') {
-        return <ToDoApp onBackToDashboard={handleBackToDashboard} />;
+    if (view === 'contactform') {
+        return <ContactForm onGoToDashboard={handleGoToDashboard} />;
     }
-
-    // Show Dashboard
-    if (isAuthenticated && currentView === 'dashboard') {
-        return <Dashboard handleLogout={handleLogout} onGoToToDo={handleGoToToDo} onGoToDashboard={handleGoToDashboard} onGoToWeather={handleGoToWeather} onGoToRegister={() => setCurrentView('register')} onGoToContactForm={handleGoToContactForm} />;
+    if (view === 'register') {
+        return <RegisterView onRegisterSuccess={handleRegisterSuccess} onSwitchToLogin={handleGoToLogin} onGoToDashboard={handleGoToDashboard} onGoToLogin={handleGoToLogin} handleLogout={handleGoToLogin} />;
     }
-
-    // Show ContactForm (from System Analytics)
-    if (isAuthenticated && currentView === 'contactform') {
-        return <ContactForm />;
+    if (view === 'todo') {
+        return <ToDoApp onBackToDashboard={handleGoToDashboard} />;
     }
-
-    // Show OIDC Login View (only login form)
-    if (currentView === 'login') {
-        return (
-            <LoginView 
-                onLoginSuccess={handleLoginSuccess}
-                onSwitchToRegister={handleSwitchToRegister}
-            />
-        );
+    if (view === 'weather') {
+        return <WeatherApp onBackToDashboard={handleGoToDashboard} />;
     }
-
-    // Show RegisterView only when requested from Dashboard
-    if (isAuthenticated && currentView === 'register') {
-        return (
-            <RegisterView 
-                onRegisterSuccess={handleRegisterSuccess}
-                onSwitchToLogin={handleSwitchToLogin}
-                onGoToDashboard={handleGoToDashboard}
-                handleLogout={handleLogout}
-                onGoToLogin={handleSwitchToLogin}
-            />
-        );
-    }
-
-    // Show OIDC Login View (only login form)
+    // Default: dashboard
     return (
-        <LoginView 
-            onLoginSuccess={handleLoginSuccess}
-            onSwitchToRegister={handleSwitchToRegister}
+        <Dashboard
+            handleLogout={handleGoToLogin}
+            onGoToToDo={handleGoToToDo}
+            onGoToDashboard={handleGoToDashboard}
+            onGoToWeather={handleGoToWeather}
+            onGoToRegister={handleGoToRegister}
+            onGoToLogin={handleGoToLogin}
+            onGoToContactForm={handleGoToContactForm}
         />
     );
 }

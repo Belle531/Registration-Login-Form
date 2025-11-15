@@ -1,10 +1,10 @@
 import React from 'react';
 import { Settings, Calendar, ChefHat, TrendingUp, Cloud, Briefcase } from 'lucide-react';
+import LoginView from './LoginView.jsx';
 
-const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, onGoToRegister }) => {
-
+const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, onGoToRegister, onGoToLogin, onGoToContactForm }) => {
     // Helper component for the professional-looking card/tile
-    const AppTile = ({ title, description, icon: Icon, onClick, color }) => {
+    const AppTile = ({ title, description, icon, onClick, color }) => {
         // Define base colors based on the main color prop
         const colorClass = {
             purple: { text: 'text-purple-600', ring: 'focus:ring-purple-300', bg: 'bg-purple-100' },
@@ -23,7 +23,7 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
             >
                 {/* Icon Circle/Badge */}
                 <div className={`p-3 rounded-full mr-4 ${colorClass.bg} flex-shrink-0`}>
-                    <Icon className={`w-6 h-6 ${colorClass.text}`} />
+                    {React.createElement(icon, { className: `w-6 h-6 ${colorClass.text}` })}
                 </div>
                 
                 <div className="flex flex-col items-start">
@@ -45,9 +45,9 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
             {/* Header */}
             <header className="w-full bg-slate-800 p-4 shadow-xl fixed top-0 left-0 z-10">
                 <div className="flex items-center w-full gap-4">
-                    {/* Centered Title */}
-                    <div className="flex-1 flex justify-center">
-                        <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-wider text-center mx-auto">
+                    {/* Centered Title - perfectly aligned with card */}
+                    <div className="w-full flex justify-start items-center pl-64">
+                        <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-wider text-center mx-auto w-full">
                             Cassandra's Digital Solutions
                         </h1>
                     </div>
@@ -73,10 +73,10 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                     </div>
                 </div>
                 
-                {/* Welcome and Status Area */}
+                {/* Status Area */}
                 <div className="w-full max-w-5xl text-center mb-10">
                     <h2 className="text-4xl font-extrabold text-slate-800 mb-2">
-                        Welcome to the Dashboard
+                        Dashboard
                     </h2>
                     <p className="text-lg text-gray-600 font-medium">Your personalized access portal to all application features.</p>
                 </div>
@@ -125,25 +125,27 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             color="orange"
                         />
 
-                        {/* 5. Placeholder Tile - Analytics */}
+                        {/* 5. Login Form (was Document Storage) */}
+                        <AppTile 
+                            title="Login Form"
+                            description="Access your account securely using the login form. Only visible when you click this button."
+                            icon={Briefcase}
+                            onClick={onGoToLogin}
+                            color="sky"
+                        />
+                        {/* 6. Contact Form */}
                         <AppTile 
                             title="Contact Form"
                             description="Reach out to us using the contact form."
                             icon={Settings}
-                            onClick={() => alert('App coming soon!')}
+                            onClick={onGoToContactForm}
                             color="slate"
-                        />
-                         {/* 6. Placeholder Tile - Documents */}
-                        <AppTile 
-                            title="Document Storage"
-                            description="Securely access and manage all your documents."
-                            icon={Briefcase}
-                            onClick={() => alert('App coming soon!')}
-                            color="sky"
                         />
                     </div>
                 </div>
             </main>
+
+            {/* LoginView modal removed; navigation now handled by App.jsx */}
         </div>
     );
 }

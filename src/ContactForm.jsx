@@ -1,23 +1,11 @@
+
 import React from 'react';
 
 /**
- * Welcome Component
- * Shows the welcome screen after successful login
+ * ContactForm Component
+ * Shows the contact form after successful login
  */
-const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
-    // Display full name if available, otherwise use email username, or fallback to 'User'
-    const getDisplayName = () => {
-        if (user?.firstName && user?.lastName) {
-            return `${user.firstName} ${user.lastName}`;
-        } else if (user?.firstName) {
-            return user.firstName;
-        } else if (user?.email) {
-            return user.email.split('@')[0];
-        }
-        return 'User';
-    };
-    
-    const userName = getDisplayName();
+const ContactForm = ({ onGoToDashboard }) => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
@@ -25,19 +13,17 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
                 <div className="flex items-center justify-between">
                     {/* Spacer to balance the layout */}
                     <div className="flex space-x-2 opacity-0 pointer-events-none">
-                        
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Dashboard</button>
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Logout</button>
                         <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Login</button>
                     </div>
-                    
-                    <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
-                        Cassandra's Digital Solutions
-                    </h1>
-                    
+                    <div className="flex-1 flex justify-center">
+                        <h1 className="text-3xl font-extrabold text-white text-center tracking-wider mx-auto">
+                            Cassandra's Digital Solutions
+                        </h1>
+                    </div>
                     {/* Header Navigation Buttons */}
                     <div className="flex space-x-2">
-
                         <button
                             onClick={onGoToDashboard}
                             className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
@@ -45,17 +31,13 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
                             Dashboard
                         </button>
                         <button
-                            onClick={() => {
-                                if (window.confirm('Are you sure you want to logout? You will need to login again to access your account.')) {
-                                    handleLogout();
-                                }
-                            }}
-                            className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
+                            onClick={() => { localStorage.removeItem('authToken'); window.location.href = '/'; }}
+                            className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 active:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 shadow-md transition-colors text-xs"
                         >
                             Logout
                         </button>
                         <button
-                            onClick={onSwitchToLogin}
+                            onClick={() => window.location.href = '/login'}
                             className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
                         >
                             Login
@@ -74,32 +56,7 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
                 </div>
             </div>
 
-            {/* Welcome Card */}
-            <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-xl text-center border-b-8 border-amber-500 mb-20">
-                
-                {/* Main Title */}
-                <div className="flex flex-col items-center justify-center mb-6">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
-                        Welcome!
-                    </h1>
-                </div>
-
-                {/* Personalized Greeting */}
-                <p className="text-xl text-slate-600 mb-8">
-                    <span className="font-extrabold text-indigo-600 capitalize">{userName}</span>
-                </p>
-
-                {/* Navigation Buttons */}
-                <div className="grid grid-cols-1 gap-4">
-                    {/* Primary Call to Action */}
-                    <button
-                        onClick={onGoToDashboard}
-                        className="w-full bg-amber-500 text-white font-bold text-lg px-6 py-3 rounded-xl hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-lg transition-all duration-200 transform hover:scale-[1.01]"
-                    >
-                        Proceed to Dashboard
-                    </button>
-                </div>
-            </div>
+                {/* Card removed as requested. */}
 
             <footer className="w-full bg-slate-800 p-4 shadow-xl fixed bottom-0 left-0">
                 <p className="text-gray-300 text-center text-sm font-medium font-sans">
@@ -110,4 +67,4 @@ const Welcome = ({ user, handleLogout, onGoToDashboard, onSwitchToLogin }) => {
     );
 };
 
-export default Welcome;
+export default ContactForm;

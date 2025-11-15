@@ -168,9 +168,11 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin, handleLogout, onGoTo
                 <div className="flex items-center w-full gap-4">
                     {/* Centered Title */}
                     <div className="flex-1 flex justify-center">
-                        <h1 className="text-3xl font-extrabold text-white text-center tracking-wider mx-auto">
-                            Cassandra's Digital Solutions
-                        </h1>
+                        <div className="flex-1 flex justify-start pl-56">
+                            <h1 className="text-3xl font-extrabold text-white text-center tracking-wider mx-auto">
+                                Cassandra's Digital Solutions
+                            </h1>
+                        </div>
                     </div>
                     {/* Header Navigation Buttons (far right) */}
                     <div className="flex space-x-2 text-xs sm:text-sm">
