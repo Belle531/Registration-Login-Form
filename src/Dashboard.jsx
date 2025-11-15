@@ -51,7 +51,7 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             Cassandra's Digital Solutions
                         </h1>
                     </div>
-                    {/* Header Navigation Buttons (far right) */}
+                    {/* Header Navigation Buttons (far right) - ONLY the three requested buttons */}
                     <div className="flex space-x-2 text-xs sm:text-sm">
                         <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
                         <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
@@ -146,6 +146,12 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
             </main>
 
             {/* LoginView modal removed; navigation now handled by App.jsx */}
+            {/* Footer */}
+            <footer className="w-full bg-slate-800 p-4 shadow-xl fixed bottom-0 left-0 z-10">
+                <p className="text-gray-300 text-center text-sm font-medium font-sans">
+                    &copy; 2025 Cassandra's Digital Solutions. All rights reserved.
+                </p>
+            </footer>
         </div>
     );
 }

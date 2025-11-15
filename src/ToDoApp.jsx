@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ToDoApp = ({ onBackToDashboard, user }) => {
+const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -230,45 +230,18 @@ const ToDoApp = ({ onBackToDashboard, user }) => {
       
       {/* 1. STYLED, FULL-WIDTH HEADER (Deep Slate Gray) */}
       <header className="w-full bg-slate-800 p-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          {/* Spacer to balance the layout */}
-          <div className="flex space-x-2 opacity-0 pointer-events-none">
-            {/* Removed Welcome button for UI cleanup */}
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Dashboard</button>
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Logout</button>
-            <button className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs">Login</button>
+        <div className="flex items-center w-full gap-4">
+          {/* Centered Title - perfectly aligned with card */}
+          <div className="w-full flex justify-start items-center pl-64">
+            <h1 className="text-3xl font-extrabold text-white text-center tracking-wider w-full mx-auto">
+              Cassandra's Digital Solutions
+            </h1>
           </div>
-          
-            <div className="flex-1 flex justify-center">
-              <h1 className="text-3xl font-extrabold text-white text-center tracking-wider">
-                Cassandra's Digital Solutions
-              </h1>
-            </div>
-          
-          {/* Header Navigation Buttons */}
-          <div className="flex space-x-2">
-            <button
-              onClick={onBackToDashboard}
-              className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => {
-                if (window.confirm('Are you sure you want to logout?')) {
-                  window.location.href = '/';
-                }
-              }}
-              className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
-            >
-              Logout
-            </button>
-            <button
-              onClick={() => window.location.href = '/'}
-              className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md transition-colors text-xs"
-            >
-              Login
-            </button>
+          {/* Header Navigation Buttons (far right) - Consistent with Dashboard */}
+          <div className="flex space-x-2 text-xs sm:text-sm">
+            <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
+            <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
+            <button onClick={onGoToRegister} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Login</button>
           </div>
         </div>
       </header>

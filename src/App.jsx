@@ -22,7 +22,19 @@ export default function App() {
     const handleRegisterSuccess = () => setView('dashboard');
 
     if (view === 'login') {
-        return <LoginView onLoginSuccess={handleLoginSuccess} onSwitchToRegister={handleGoToRegister} />;
+        return (
+            <LoginView
+                onLoginSuccess={handleLoginSuccess}
+                onSwitchToRegister={handleGoToRegister}
+                onGoToDashboard={handleGoToDashboard}
+                onGoToRegister={handleGoToRegister}
+                onGoToLogin={handleGoToLogin}
+                onGoToToDo={handleGoToToDo}
+                onGoToWeather={handleGoToWeather}
+                onGoToContactForm={handleGoToContactForm}
+                handleLogout={handleGoToLogin}
+            />
+        );
     }
     if (view === 'contactform') {
         return <ContactForm onGoToDashboard={handleGoToDashboard} />;
@@ -31,7 +43,11 @@ export default function App() {
         return <RegisterView onRegisterSuccess={handleRegisterSuccess} onSwitchToLogin={handleGoToLogin} onGoToDashboard={handleGoToDashboard} onGoToLogin={handleGoToLogin} handleLogout={handleGoToLogin} />;
     }
     if (view === 'todo') {
-        return <ToDoApp onBackToDashboard={handleGoToDashboard} />;
+        return <ToDoApp 
+            onGoToDashboard={handleGoToDashboard}
+            handleLogout={handleGoToLogin}
+            onGoToRegister={handleGoToRegister}
+        />;
     }
     if (view === 'weather') {
         return <WeatherApp onBackToDashboard={handleGoToDashboard} />;
