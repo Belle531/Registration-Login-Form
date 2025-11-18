@@ -1,5 +1,4 @@
-
-# Sample Recipes for Database Table
+# Recipes for Database Table
 
 Below are the recipes previously displayed on your cards. You can use this information to seed your database table.
 
