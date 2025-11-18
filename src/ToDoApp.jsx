@@ -114,7 +114,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
     }
   };
 
-  // Remove task from backend
+  
   const removeTodo = async (taskId, idx) => {
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
@@ -135,7 +135,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
     }
   };
 
-  // Toggle task completion in backend
+  
   const toggleComplete = async (taskId, idx, currentStatus) => {
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
@@ -174,8 +174,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
   };
 
   // Save edited task to backend
-    // Start editing a task
-    const startEdit = (taskId, text, currentPriority) => {
+     const startEdit = (taskId, text, currentPriority) => {
       setEditingId(taskId);
       setEditText(text);
       setEditPriority(currentPriority || 'medium');
@@ -219,9 +218,9 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
   // Clear error message after 3 seconds
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => setError(''), 3000);
+      const timer = setTimeout(() => setError(''), 2000);
       return () => clearTimeout(timer);
-    }
+    }2
   }, [error]);
 
   return (
@@ -231,13 +230,13 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
       {/* 1. STYLED, FULL-WIDTH HEADER (Deep Slate Gray) */}
       <header className="w-full bg-slate-800 p-4 shadow-xl">
         <div className="flex items-center w-full gap-4">
-          {/* Centered Title - perfectly aligned with card */}
+       
           <div className="w-full flex justify-start items-center pl-64">
             <h1 className="text-3xl font-extrabold text-white text-center tracking-wider w-full mx-auto">
               Cassandra's Digital Solutions
             </h1>
           </div>
-          {/* Header Navigation Buttons (far right) - Consistent with Dashboard */}
+          
           <div className="flex space-x-2 text-xs sm:text-sm">
             <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
             <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
@@ -246,10 +245,10 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
         </div>
       </header>
 
-      {/* MAIN CONTENT AREA: Uses flex-grow to take up all available vertical space */}
+     
       <div className="flex flex-col items-center w-full px-4 py-8 flex-grow"> 
 
-        {/* Logo Section - Enhanced (moved above card) */}
+       
         <div className="mb-6 text-center">
           <div className="relative inline-block">
             <div className="w-40 h-40 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-300 border-2 border-white">
@@ -258,21 +257,21 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
             <div className="absolute inset-0 rounded-full border-2 border-amber-400 opacity-20 animate-ping"></div>
           </div>
         </div>
-        {/* 2. RESPONSIVE Todo List Card */}
+      
         <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xs sm:max-w-md md:max-w-lg transition-all duration-300 border border-gray-100">
           
           <h2 className="text-xl font-bold text-slate-800 mb-4 text-center border-b pb-2 border-gray-100">
             {user?.firstName ? `${user.firstName}'s` : "Cassandra's"} Digital Task Manager
           </h2>
 
-          {/* Error Message */}
+        
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
             </div>
           )}
 
-          {/* Loading State */}
+        
           {loading && (
             <div className="text-center py-4">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
@@ -280,7 +279,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
             </div>
           )}
 
-          {/* Add Todo Form */}
+        
           {!loading && (
             <div className="mb-4">
               <form onSubmit={addTodo} className="flex mb-3">
@@ -399,7 +398,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
                       </div>
                     </div>
                   ) : (
-                    // View mode
+                   
                     <>
                       <div className="flex-1 flex items-center space-x-2">
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -449,7 +448,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
             </ul>
           )}
           
-          {/* Empty State */}
+         
           {!loading && todos.length === 0 && (
             <div className="text-center py-8 text-gray-500">
               <p className="text-lg">No tasks yet!</p>
@@ -457,7 +456,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
             </div>
           )}
         </div>
-        {/* Task Counter */}
+       
         {!loading && todos.length > 0 && (
           <p className="text-gray-600 text-sm mt-4 font-semibold">
             Tasks Remaining: {todos.filter(t => !t.completed).length} / Total Tasks: {todos.length}
@@ -465,7 +464,7 @@ const ToDoApp = ({ onGoToDashboard, handleLogout, onGoToRegister, user }) => {
         )}
       </div>
 
-      {/* 3. FOOTER: Matches the header using deep slate gray */}
+      
       <footer className="w-full bg-slate-800 p-4 shadow-xl mt-auto">
         <p className="text-gray-300 text-center text-sm font-medium">
           &copy; 2025 Cassandra's Digital Solutions. All rights reserved.

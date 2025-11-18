@@ -5,8 +5,9 @@ import ContactForm from './ContactForm.jsx';
 import RegisterView from './RegisterView.jsx';
 import ToDoApp from './ToDoApp.jsx';
 import WeatherApp from './WeatherApp.jsx';
+import SpiceRack from './SpiceRack.jsx';
 export default function App() {
-    const [view, setView] = useState('dashboard'); // 'dashboard', 'login', 'contactform', 'register', 'todo', 'weather'
+    const [view, setView] = useState('dashboard'); 
 
     // Navigation handlers
     const handleGoToDashboard = () => setView('dashboard');
@@ -15,10 +16,11 @@ export default function App() {
     const handleGoToRegister = () => setView('register');
     const handleGoToToDo = () => setView('todo');
     const handleGoToWeather = () => setView('weather');
+    const handleGoToSpiceRack = () => setView('spicerack');
 
-    // After login, go to contact form
+    
     const handleLoginSuccess = () => setView('contactform');
-    // After registration, go to dashboard
+   
     const handleRegisterSuccess = () => setView('dashboard');
 
     if (view === 'login') {
@@ -52,7 +54,14 @@ export default function App() {
     if (view === 'weather') {
         return <WeatherApp onBackToDashboard={handleGoToDashboard} />;
     }
-    // Default: dashboard
+    if (view === 'spicerack') {
+        return <SpiceRack 
+            onGoToDashboard={() => setView('dashboard')}
+            handleLogout={handleGoToLogin}
+            onGoToRegister={handleGoToRegister}
+        />;
+    }
+    
     return (
         <Dashboard
             handleLogout={handleGoToLogin}
@@ -62,6 +71,7 @@ export default function App() {
             onGoToRegister={handleGoToRegister}
             onGoToLogin={handleGoToLogin}
             onGoToContactForm={handleGoToContactForm}
+            onGoToSpiceRack={handleGoToSpiceRack}
         />
     );
 }

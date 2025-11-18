@@ -161,3 +161,60 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWelcome, o
 };
 
 export default Dashboard;
+
+# Postman
+
+# Post: Body
+https://fhqou908wk.execute-api.us-east-1.amazonaws.com/recipes
+{
+    "RecipeName": "Classic Italian Lasagna",
+    "Description": "Rich, cheesy, and hearty.",
+    "PrepTime": "45 minutes",
+    "CookTime": "1 hour 30 minutes",
+    "Cuisine": "Italian",
+    "MainIngredient": "Beef",
+    "Rating": 4.9,
+    "UserID": "USER#9599"
+}
+{
+    "RecipeName": "Vegan Thai Green Curry",
+    "Description": "A creamy, fragrant, and spicy coconut curry with fresh vegetables.",
+    "PrepTime": "20 minutes",
+    "CookTime": "30 minutes",
+    "Cuisine": "Thai",
+    "MainIngredient": "Tofu",
+    "Rating": 4.8,
+    "UserID": "USER#9599"
+}
+{
+    "RecipeName": "Classic French Crème Brûlée",
+    "Description": "Rich custard base topped with a layer of hardened caramelized sugar.",
+    "PrepTime": "25 minutes",
+    "CookTime": "1 hour",
+    "Cuisine": "French",
+    "MainIngredient": "Eggs",
+    "Rating": 5.0,
+    "UserID": "USER#9599" 
+}
+{
+    "RecipeName": "Chicken Tacos al Pastor",
+    "Description": "Marinated chicken cooked with pineapple, served in soft corn tortillas.",
+    "PrepTime": "15 minutes",
+    "CookTime": "40 minutes",
+    "Cuisine": "Mexican",
+    "MainIngredient": "Chicken",
+    "Rating": 4.7,
+    "UserID": "USER#9599" 
+}
+{
+    "RecipeName": "Mediterranean Lemon Herb Salmon",
+    "Description": "Flaky salmon baked with lemon, garlic, and fresh Mediterranean herbs.",
+    "PrepTime": "10 minutes",
+    "CookTime": "20 minutes",
+    "Cuisine": "Mediterranean",
+    "MainIngredient": "Salmon",
+    "Rating": 4.9,
+    "UserID": "USER#9599" 
+}
+
+Get Single Recipe 

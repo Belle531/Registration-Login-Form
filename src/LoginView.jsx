@@ -1,4 +1,3 @@
-    // ...existing code...
 import React, { useState } from 'react';
 // import AuthLayout from './assets/AuthLayout.jsx'; // removed duplicate import
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -8,7 +7,6 @@ const LoginView = ({
     onSwitchToRegister,
     onGoToDashboard,
     onGoToRegister,
-    onGoToLogin,
    
     handleLogout
 }) => {
@@ -64,7 +62,7 @@ const LoginView = ({
                             Cassandra's Digital Solutions
                         </h1>
                     </div>
-                    {/* Header Navigation Buttons (far right) - ONLY the three requested buttons */}
+                    {/* Header Navigation Buttons*/}
                     <div className="flex space-x-2 text-xs sm:text-sm">
                         <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
                         <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>

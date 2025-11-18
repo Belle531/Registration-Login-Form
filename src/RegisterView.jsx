@@ -115,7 +115,7 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin, handleLogout, onGoTo
             return;
         }
 
-        // CAPSTONE PROJECT: AWS Lambda /register API call
+        // AWS Lambda /register API call:
         try {
             const response = await fetch('http://localhost:3001/register', {
                 method: 'POST',
@@ -174,7 +174,7 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin, handleLogout, onGoTo
                             </h1>
                         </div>
                     </div>
-                    {/* Header Navigation Buttons (far right) */}
+                    {/* Header Navigation Buttons */}
                     <div className="flex space-x-2 text-xs sm:text-sm">
                         <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
                         <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
@@ -293,7 +293,7 @@ const RegisterView = ({ onRegisterSuccess, onSwitchToLogin, handleLogout, onGoTo
                                 </button>
                             </div>
                         </div>
-                        {/* Button Row - Create Account and Language Selector */}
+                        {/* Button Row */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <button type="submit"
                                     className="bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl hover:bg-amber-600 active:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-md">

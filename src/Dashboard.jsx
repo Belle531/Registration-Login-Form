@@ -2,17 +2,17 @@ import React from 'react';
 import { Settings, Calendar, ChefHat, TrendingUp, Cloud, Briefcase } from 'lucide-react';
 import LoginView from './LoginView.jsx';
 
-const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, onGoToRegister, onGoToLogin, onGoToContactForm }) => {
-    // Helper component for the professional-looking card/tile
+const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, onGoToRegister, onGoToLogin, onGoToContactForm, onGoToSpiceRack }) => {
+   
     const AppTile = ({ title, description, icon, onClick, color }) => {
-        // Define base colors based on the main color prop
+        
         const colorClass = {
             purple: { text: 'text-purple-600', ring: 'focus:ring-purple-300', bg: 'bg-purple-100' },
             sky: { text: 'text-sky-600', ring: 'focus:ring-sky-300', bg: 'bg-sky-100' },
             amber: { text: 'text-amber-600', ring: 'focus:ring-amber-300', bg: 'bg-amber-100' },
             orange: { text: 'text-orange-600', ring: 'focus:ring-orange-300', bg: 'bg-orange-100' },
             slate: { text: 'text-slate-600', ring: 'focus:ring-slate-300', bg: 'bg-slate-100' },
-        }[color] || colorClass.slate; // Default to slate if color is undefined
+        }[color] || colorClass.slate; 
 
         return (
             <button
@@ -21,7 +21,7 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             transform hover:scale-[1.02] text-left border border-gray-200 bg-white 
                             focus:outline-none focus:ring-4 ${colorClass.ring}`}
             >
-                {/* Icon Circle/Badge */}
+              
                 <div className={`p-3 rounded-full mr-4 ${colorClass.bg} flex-shrink-0`}>
                     {React.createElement(icon, { className: `w-6 h-6 ${colorClass.text}` })}
                 </div>
@@ -42,16 +42,15 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                 .fade-in { animation: fadeIn 0.8s ease-out; }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
-            {/* Header */}
             <header className="w-full bg-slate-800 p-4 shadow-xl fixed top-0 left-0 z-10">
                 <div className="flex items-center w-full gap-4">
-                    {/* Centered Title - perfectly aligned with card */}
+                    
                     <div className="w-full flex justify-start items-center pl-64">
                         <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-wider text-center mx-auto w-full">
                             Cassandra's Digital Solutions
                         </h1>
                     </div>
-                    {/* Header Navigation Buttons (far right) - ONLY the three requested buttons */}
+                    
                     <div className="flex space-x-2 text-xs sm:text-sm">
                         <button onClick={onGoToDashboard} className="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors">Dashboard</button>
                         <button onClick={handleLogout} className="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors">Logout</button>
@@ -63,7 +62,7 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center p-4 pt-24 pb-20 fade-in">
                 
-                {/* Logo Section - Smaller and more refined */}
+                
                 <div className="mt-8 mb-8 text-center">
                     <div className="relative inline-block">
                         <div className="w-32 h-32 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform duration-300 border-4 border-white">
@@ -116,16 +115,16 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                             color="amber"
                         />
 
-                        {/* 4. The Spice Rack - Recipe Community App (using a placeholder action) */}
+                        {/* 4. The Spice Rack - Recipe*/}
                         <AppTile 
                             title="The Spice Rack"
                             description="Search, save, and share recipes with the community."
                             icon={ChefHat}
-                            onClick={() => alert('App coming soon!')}
+                            onClick={onGoToSpiceRack}
                             color="orange"
                         />
 
-                        {/* 5. Login Form (was Document Storage) */}
+                        {/* 5. Login Form */}
                         <AppTile 
                             title="Login Form"
                             description="Access your account securely using the login form. Only visible when you click this button."
@@ -145,7 +144,7 @@ const Dashboard = ({ handleLogout, onGoToToDo, onGoToDashboard, onGoToWeather, o
                 </div>
             </main>
 
-            {/* LoginView modal removed; navigation now handled by App.jsx */}
+            
             {/* Footer */}
             <footer className="w-full bg-slate-800 p-4 shadow-xl fixed bottom-0 left-0 z-10">
                 <p className="text-gray-300 text-center text-sm font-medium font-sans">

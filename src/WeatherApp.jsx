@@ -1,6 +1,7 @@
 
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Search } from 'lucide-react';
 
 // Helper component for daily forecast card
 function DayForecastCard({ day, icon, high, low, precip, details }) {
@@ -43,13 +44,19 @@ const sevenDayData = [
 const WeatherApp = ({ onBackToDashboard, user }) => {
 
   // All state hooks first
-  const [recentSearches, setRecentSearches] = React.useState([]);
-  const [weatherData, setWeatherData] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const [selectedLocation, setSelectedLocation] = React.useState('');
-  const [customLocation, setCustomLocation] = React.useState('');
-  const [showRecentDropdown, setShowRecentDropdown] = React.useState(false);
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [customLocation, setCustomLocation] = useState('');
+  const [showRecentDropdown, setShowRecentDropdown] = useState(false);
+  // Search icon click handler
+  const handleSearchClick = () => {
+    if (customLocation) {
+      handleLocationSelect(customLocation);
+    }
+  };
   // Automatically set current location on startup
   React.useEffect(() => {
     if (!selectedLocation && navigator.geolocation) {
@@ -184,18 +191,18 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
           {error}
         </div>
       )}
-      {/* Header - Unified style */}
+      
       <header className="w-full bg-slate-800 p-4 shadow-xl">
         <div className="flex items-center justify-between w-full gap-4">
-          {/* Spacer to help center title with card */}
+        
           <div style={{ width: '112px' }}></div>
-          {/* Centered Title - shifted right for card alignment */}
+         
           <div className="flex-1 flex justify-start pl-16">
             <h1 className="text-3xl font-extrabold text-white text-center tracking-wider mx-auto">
               Cassandra's Digital Solutions
             </h1>
           </div>
-          {/* Header Navigation Buttons (far right) */}
+          {/* Header Navigation Buttons*/}
           <div className="flex space-x-2">
             <button
               onClick={onBackToDashboard}
@@ -223,7 +230,7 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
         </div>
       </header>
 
-      {/* Logo Section - Enhanced (outside main content container) */}
+      {/* Logo Section */}
       <div className="w-full flex justify-center py-8">
         <div className="mb-6 text-center">
           {/* Logo Container with Animation */}
@@ -244,10 +251,7 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
             {user?.firstName ? `${user.firstName}'s` : "Cassandra's"} Weather Forecast
           </h2>
 
-          {/* LAYOUT PLANNING SECTION - NO FUNCTIONALITY YET */}
-          {/* Logo Section - Enhanced */}
-          
-          {/* Search Section - Compact Professional Design */}
+      
           <div className="mb-8">
             {/* Search Bar and Controls */}
             <div className="flex flex-col items-center w-full mb-6">
@@ -272,7 +276,7 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
                       <input
                         type="text"
                         placeholder="Search city or state..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-base pr-10"
+                        className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
                         value={customLocation}
                         onChange={e => setCustomLocation(e.target.value)}
                         onFocus={() => setShowRecentDropdown(true)}
@@ -281,12 +285,13 @@ const WeatherApp = ({ onBackToDashboard, user }) => {
                           if (e.key === 'Enter') handleLocationSelect(customLocation);
                         }}
                       />
-                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <circle cx="11" cy="11" r="8" stroke="currentColor" />
-                          <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" />
-                        </svg>
-                      </span>
+                      <button
+                        type="button"
+                        onClick={handleSearchClick}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                      >
+                        <Search className="w-6 h-6" />
+                      </button>
                     </div>
                   </div>
                 </div>
